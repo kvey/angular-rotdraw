@@ -6,14 +6,14 @@ angular.module('RotDrawApp')
     return {
       restrict: 'EA',
       scope: {
-        jslider: "=jslider",
-        jsliderMin: "=jsliderMin",
-        jsliderMax: "=jsliderMax",
-        jsliderDiv: "=jsliderDiv",
-        jsliderSlide: "=jsliderSlide"
+        jslider      : '=jslider',
+        jsliderMin   : '=jsliderMin',
+        jsliderMax   : '=jsliderMax',
+        jsliderDiv   : '=jsliderDiv',
+        jsliderSlide : '=jsliderSlide'
       },
-      link: function postLink(scope, element, attrs) {
-        $(element).slider({
+      link: function postLink(scope, element) {
+        element.slider({
           min: scope.jsliderMin || 0,
           max: scope.jsliderMax || 100,
           values: [scope.jslider],

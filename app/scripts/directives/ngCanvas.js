@@ -3,15 +3,15 @@
 angular.module('RotDrawApp')
   .directive('ngCanvas', function () {
     return {
-      restrict: 'EA',
-      scope: {
-        "draw": "=ngCanvasDraw",
-        "setup": "=ngCanvasSetup",
-        "width": "=ngCanvasWidth",
-        "frameRate": "=ngCanvasFrameRate",
-        "height": "=ngCanvasHeight"
+      restrict : 'EA',
+      scope : {
+        'draw'      : '=ngCanvasDraw',
+        'setup'     : '=ngCanvasSetup',
+        'width'     : '=ngCanvasWidth',
+        'frameRate' : '=ngCanvasFrameRate',
+        'height'    : '=ngCanvasHeight'
       },
-      link: function postLink(scope, element, attrs) {
+      link: function postLink(scope, element) {
         var Canvas = function Canvas() {
           var canvas      = document.createElement('canvas');
 
@@ -21,25 +21,27 @@ angular.module('RotDrawApp')
           this.canvas = canvas;
 
           element.append(this.canvas);
-        }
+        };
 
         Canvas.prototype = {
           draw: function(callback){
             var that = this;
             this.ctx.clearRect(0, 0, this.width, this.height);
             callback(this.ctx);
-            setTimeout(function(){that.draw(callback)}, scope.frameRate);
+            setTimeout(function(){
+              that.draw(callback);
+            }, scope.frameRate);
           },
           /* == Not usable currently
           clear: function(){
             this.ctx.clearRect(0, 0, this.width, this.height);
           }
           */
-        }
+        };
 
-        var c = new Canvas()
+        var c = new Canvas();
         scope.setup(c.ctx);
-        c.draw(scope.draw)
+        c.draw(scope.draw);
       }
     };
   });

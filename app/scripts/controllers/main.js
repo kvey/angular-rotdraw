@@ -4,29 +4,29 @@ angular.module('RotDrawApp')
   .controller('MainCtrl', function ($scope) {
 
     function PathObj(ctx) {
-        this.ctx = ctx;
-        this.points = [];
+      this.ctx = ctx;
+      this.points = [];
     }
 
     PathObj.prototype = {
       addPoint: function(x, y){
-          this.points.push({ x: x, y: y });
+        this.points.push({ x: x, y: y });
       },
 
       render: function(){
         var points = this.points,
             ctx    = this.ctx;
-        if (points.length < 6) return;
+        if (points.length < 6){ return; }
         ctx.lineWidth = 1;
         ctx.lineJoin = 'round';
         ctx.lineCap = 'round';
-        ctx.strokeStyle = "rgba(0,0,0,0.3)";
+        ctx.strokeStyle = 'rgba(0,0,0,0.3)';
         ctx.beginPath();
         ctx.moveTo(points[0].x, points[0].y);
         for (var i = 1; i < points.length - 2; i++) {
-            var c = (points[i].x + points[i + 1].x) / 2,
-                d = (points[i].y + points[i + 1].y) / 2;
-            ctx.quadraticCurveTo(points[i].x, points[i].y, c, d);
+          var c = (points[i].x + points[i + 1].x) / 2,
+              d = (points[i].y + points[i + 1].y) / 2;
+          ctx.quadraticCurveTo(points[i].x, points[i].y, c, d);
         }
         ctx.quadraticCurveTo(points[i].x, points[i].y, points[i + 1].x, points[i + 1].y);
         ctx.stroke();
@@ -35,11 +35,11 @@ angular.module('RotDrawApp')
       clearPath: function() {
         this.points = [];
       }
-    }
+    };
 
     function RelativePoint(x, y, dependsOn){
       this.dependsOn = dependsOn || [];
-      this._x = x; 
+      this._x = x;
       this._y = y;
       return this;
     }
@@ -49,7 +49,7 @@ angular.module('RotDrawApp')
         this.onMove(this.x - val, 0);
         this._x = val;
       },
-      get x(val){
+      get x(){
         return this._x;
       },
       set y(val){
@@ -57,7 +57,7 @@ angular.module('RotDrawApp')
         this.onMove(0, this.y - val);
         this._y = val;
       },
-      get y(val){
+      get y(){
         return this._y;
       },
       onMove: function(deltaX, deltaY){
@@ -66,7 +66,7 @@ angular.module('RotDrawApp')
           this.dependsOn[dep].y = this.dependsOn[dep].y - deltaY;
         }
       }
-    }
+    };
 
 
     function ChainedArmsNode(config){
@@ -78,7 +78,7 @@ angular.module('RotDrawApp')
         this.prev.point.dependsOn.push(point);
         this.point = point;
       }else{
-        this.point = new RelativePoint(150, 150)
+        this.point = new RelativePoint(150, 150);
       }
       this.angular = config.angular || 0.0;
       this.onMove = function(){};
@@ -86,16 +86,11 @@ angular.module('RotDrawApp')
 
     ChainedArmsNode.prototype = {
       set _len(val){
-        if(this.len){
-          // need to subtract from prior elements
-          if(this.prev){
-            this.point.y = ((this.point.y - this.prev.point.y) / this.len * val) + this.prev.point.y
-            this.point.x = ((this.point.x - this.prev.point.x) / this.len * val) + this.prev.point.x
-          }          
-          this.len = val;
-        }else{
-          this.len = val;
+        if(this.len && this.prev){
+          this.point.y = ((this.point.y - this.prev.point.y) / this.len * val) + this.prev.point.y;
+          this.point.x = ((this.point.x - this.prev.point.x) / this.len * val) + this.prev.point.x;
         }
+        this.len = val;
       },
       get _len(){
         return this.len;
@@ -110,10 +105,10 @@ angular.module('RotDrawApp')
         this.onMove = callback;
       },
 
-      detach: function(callback){
+      detach: function(){
         this.onMove = function(){};
       }
-    }
+    };
 
     function ChainedArms(ctx){
       this.ctx = ctx;
@@ -132,9 +127,9 @@ angular.module('RotDrawApp')
       chainedRotation: function(){
         for(var i = 0 ; i < this.nodes.length ; i++){
           //for each node
-          var node = this.nodes[i], 
-              prevNode = this.nodes[i-1], 
-              offset, 
+          var node = this.nodes[i],
+              prevNode = this.nodes[i-1],
+              offset,
               sin, cos;
           if(prevNode){
             offset = prevNode.point;
@@ -162,10 +157,10 @@ angular.module('RotDrawApp')
           var node = this.nodes[i];
           ctx.lineTo(node.point.x, node.point.y);
         }
-        ctx.strokeStyle = "rgba(200,0,0,1.0)";
+        ctx.strokeStyle = 'rgba(200,0,0,1.0)';
         ctx.stroke();
       }
-    }
+    };
 
     // canvas setup and draw
     var pathObj;
@@ -181,9 +176,10 @@ angular.module('RotDrawApp')
       $scope.nodes = cArms.nodes;
       $scope.clearPath = function(){
         pathObj.clearPath();
-      }
+      };
+
       $scope.addNode = function(){
-        // need to use last node always 
+        // need to use last node always
         cArms.nodes[cArms.nodes.length-1].detach();
         cArms.addNode(new ChainedArmsNode({
           len: 20,
@@ -192,11 +188,11 @@ angular.module('RotDrawApp')
         cArms.nodes[cArms.nodes.length-1].attach(function(node){
           pathObj.addPoint(node.point.x, node.point.y);
         });
-      }
-    }
-    $scope.draw = function(ctx){
+      };
+    };
+    $scope.draw = function(){
       cArms.chainedRotation();
       pathObj.render();
       cArms.render();
-    }
+    };
   });

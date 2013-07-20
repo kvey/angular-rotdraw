@@ -3,6 +3,7 @@
 describe('Directive: jslider', function () {
   beforeEach(module('RotDrawApp'));
 
+  /*
   var element;
 
   it('should make hidden element visible', inject(function ($rootScope, $compile) {
@@ -10,4 +11,5 @@ describe('Directive: jslider', function () {
     element = $compile(element)($rootScope);
     expect(element.text()).toBe('this is the jslider directive');
   }));
+  */
 });
